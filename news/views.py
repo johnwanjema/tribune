@@ -12,6 +12,7 @@ def welcome(request):
 def news_of_day(request):
     date = dt.date.today()
     news = Article.todays_news()
+    print(news)
     return render(request, 'all-news/today-news.html', {"date": date,"news" :news})
 
 
@@ -55,7 +56,14 @@ def search_results(request):
 
     else:
         message = "You haven't searched for any term"
-        return render(request, 'all-news/search.html',{"message":message})          
+        return render(request, 'all-news/search.html',{"message":message})  
+
+def article(request,article_id):
+    try:
+        article = Article.objects.get(id = article_id)
+    except DoesNotExist:
+        raise Http404()
+    return render(request,"all-news/article.html", {"article":article})
 
 
 
