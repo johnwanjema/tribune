@@ -1,14 +1,21 @@
 {%extends 'all-news/base.html'%}
+{% load bootstrap3 %}
 {% block content %}
 {{ block.super}}
 
 <div class="container">
+  <form action="{%url 'newsToday'%}" method="post">
+    {%csrf_token%}
 
+    {% bootstrap_form letterForm layout='inline' %}
+    <input type="submit" value="Subscribe">
+  </form>
   <!-- Looping through news   -->
   {% for news_item in news %}
 
   <div class="row">
     <div class="col-md-6">
+
       <!-- Card -->
       <div class="card">
 
@@ -35,16 +42,16 @@
       </div>
       <!-- Card -->
     </div>
- 
+
   </div>
 
 
 
-{% empty %}
-<div class="row">
-  <h2 class="text-center">There No News Items</h2>
-</div>
-{% endfor %}
+  {% empty %}
+  <div class="row">
+    <h2 class="text-center">There No News Items</h2>
+  </div>
+  {% endfor %}
 
 </div>
 
