@@ -2,12 +2,16 @@ from django.shortcuts import render,redirect
 from django.http import HttpResponse,HttpResponseRedirect
 import datetime as dt
 from django.http  import HttpResponse,Http404
-from .models import Article,NewsLetterRecipients
+from .models import Article,NewsLetterRecipients,MoringaMerch
 from .forms import NewsLetterForm,NewArticleForm
 from .emails import send_welcome_email
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-
+from .serializer import MerchSerializer
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import status
+from .permissions import IsAdminOrReadOnly
 
 # Create your views here.
 def welcome(request):
@@ -29,7 +33,7 @@ def newsletter(request):
     send_welcome_email(name, email)
     data = {'success': 'You have been successfully added to mailing list'}
     return JsonResponse(data)
-    
+
 
 def convert_dates(dates):
 
@@ -96,6 +100,20 @@ def new_article(request):
         form = NewArticleForm()
     return render(request, 'new_article.html', {"form": form})
 
+class MerchList(APIView):
+    def get(self, request, format=None):
+        all_merch = MoringaMerch.objects.all()
+        serializers = MerchSerializer(all_merch, many=True)
+        return Response(serializers.data)
+
+    def post(self, request, format=None):
+        serializers = MerchSerializer(data=request.data)
+        if serializers.is_valid():
+            serializers.save()
+            permission_classes = (IsAdminOrReadOnly,)
+            return Response(serializers.data, status=status.HTTP_201_CREATED)
+        return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)    
+        
 
 
 

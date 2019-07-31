@@ -30,6 +30,12 @@ class tags(models.Model):
     def __str__(self):
         return self.name
 
+class MoringaMerch(models.Model):
+    name = models.CharField(max_length=40)
+    description = models.TextField()
+    price = models.DecimalField(decimal_places=2, max_digits=20)
+
+    
 class Article(models.Model):
     title = models.CharField(max_length =60)
     post = HTMLField()
